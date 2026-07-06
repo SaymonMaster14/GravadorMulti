@@ -270,17 +270,30 @@
                 </Grid>
             </Border>
 
-            <Grid Grid.Row="2" Margin="20" RowDefinitions="Auto, Auto, *" DataContext="{Binding ProjetoSelecionado}">
+            <Grid Grid.Row="2" Margin="20" RowDefinitions="Auto, Auto, Auto, *" DataContext="{Binding ProjetoSelecionado}">
                 <TextBlock Text="Roteiro:" Foreground="{DynamicResource TextDimBrush}" Margin="0,0,0,8"/>
                 
-                <TextBox Grid.Row="1" Height="120" TextWrapping="Wrap" 
+                <TextBox Grid.Row="1" MinHeight="60" MaxHeight="600" Height="120" TextWrapping="Wrap" 
                          AcceptsReturn="True" 
                          Watermark="Cole seu texto aqui..."
                          Background="{DynamicResource SecondaryBackgroundBrush}" Foreground="{DynamicResource TextWhiteBrush}" BorderThickness="0" CornerRadius="8"
                          Padding="10"
                          Text="{Binding TextoRoteiro}"/>
 
-                <Grid Grid.Row="2" RowDefinitions="Auto, *" Margin="0,20,0,0">
+                <!-- Handle de Redimensionamento do Roteiro -->
+                <Border Grid.Row="2" Height="12" Background="Transparent" Cursor="SizeNS"
+                        PointerPressed="RoteiroSplitter_PointerPressed"
+                        PointerMoved="RoteiroSplitter_PointerMoved"
+                        PointerReleased="RoteiroSplitter_PointerReleased"
+                        Margin="0,4,0,4">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="3">
+                        <Border Width="20" Height="2" Background="{DynamicResource TextDimBrush}" CornerRadius="1"/>
+                        <Border Width="20" Height="2" Background="{DynamicResource TextDimBrush}" CornerRadius="1"/>
+                        <Border Width="20" Height="2" Background="{DynamicResource TextDimBrush}" CornerRadius="1"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="3" RowDefinitions="Auto, *" Margin="0,0,0,0">
                     <Button Grid.Row="0" Classes="action"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                             Click="BtnFatiar_Click" Margin="0,0,0,15">

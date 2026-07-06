@@ -46,6 +46,12 @@ namespace GravadorMulti
         private bool _estaTocando;
         private bool _wasPlayingBeforeScrub;
         private DateTime _lastScrubTime = DateTime.MinValue;
+
+        // Splitter de redimensionamento do roteiro
+        private bool _isResizingRoteiro;
+        private double _roteiroResizeStartY;
+        private double _roteiroHeightAtStart;
+        private TextBox? _roteiroTextBox;
         private const double LARGURA_ONDA_DESENHO = 800.0;
 
         // Undo Recording State
@@ -285,11 +291,12 @@ namespace GravadorMulti
                 _itemGravando.IsRecording = false;
             }
 
-            // Collapse all items, expand this one
+            // Apenas limpa o estado de gravação dos outros itens
+            // NÃO colapsar itens — isso causa reflow do layout e "puxão" no scroll
             foreach (var i in proj.Itens)
             {
-                i.IsExpanded = false;
-                i.IsRecording = false;
+                if (i != item)
+                    i.IsRecording = false;
             }
             item.IsExpanded = true;
             item.IsRecording = true;
@@ -1105,6 +1112,63 @@ namespace GravadorMulti
             if (e.Source is Visual v && v.FindAncestorOfType<Button>() != null) return;
             var item = (sender as Grid)?.DataContext as ItemRoteiro;
             if (item != null) item.IsExpanded = !item.IsExpanded;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        //  ROTEIRO RESIZE SPLITTER
+        // ═══════════════════════════════════════════════════════════
+
+        private void RoteiroSplitter_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            var border = sender as Border;
+            if (border == null) return;
+
+            var props = e.GetCurrentPoint(border).Properties;
+            if (!props.IsLeftButtonPressed) return;
+
+            // Encontrar o TextBox do roteiro (irmão acima do splitter)
+            if (_roteiroTextBox == null)
+            {
+                var parent = border.Parent as Grid;
+                if (parent != null)
+                {
+                    foreach (var child in parent.Children)
+                    {
+                        if (child is TextBox tb && tb.Watermark == "Cole seu texto aqui...")
+                        {
+                            _roteiroTextBox = tb;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (_roteiroTextBox == null) return;
+
+            _isResizingRoteiro = true;
+            _roteiroResizeStartY = e.GetPosition(this).Y;
+            _roteiroHeightAtStart = _roteiroTextBox.Height;
+            e.Pointer.Capture(border);
+            e.Handled = true;
+        }
+
+        private void RoteiroSplitter_PointerMoved(object sender, PointerEventArgs e)
+        {
+            if (!_isResizingRoteiro || _roteiroTextBox == null) return;
+
+            double currentY = e.GetPosition(this).Y;
+            double delta = currentY - _roteiroResizeStartY;
+            double newHeight = Math.Clamp(_roteiroHeightAtStart + delta, 60, 600);
+            _roteiroTextBox.Height = newHeight;
+            e.Handled = true;
+        }
+
+        private void RoteiroSplitter_PointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            if (!_isResizingRoteiro) return;
+            _isResizingRoteiro = false;
+            e.Pointer.Capture(null);
+            e.Handled = true;
         }
 
         // ═══════════════════════════════════════════════════════════

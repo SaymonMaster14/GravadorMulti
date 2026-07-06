@@ -51,5 +51,9 @@ Projetos/
 *.flac
 *.m4a
 
-## Logs
+## Logs e arquivos internos
 *.log
+build_output.txt
+crash_log.txt
+CORRECOES_TECNICAS.md
+project bible.md
