@@ -30,12 +30,12 @@ O `bass.dll` nativo já está incluso em `runtimes/`.
 
 ## Instalação
 
-Baixe o executável da página de [Releases](https://github.com/DaviAndreiDev/GravadorMulti/releases). É self-contained — não precisa do .NET instalado. Descompacte e execute.
+Baixe o executável da página da [release v2.0.0](https://github.com/SaymonMaster14/GravadorMulti/releases/tag/v2.0.0). É self-contained — não precisa do .NET instalado. Descompacte e execute.
 
 ### Build local
 
 ```bash
-git clone https://github.com/DaviAndreiDev/GravadorMulti.git
+git clone https://github.com/SaymonMaster14/GravadorMulti.git
 cd GravadorMulti
 dotnet run
 ```
